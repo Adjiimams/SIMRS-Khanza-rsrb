@@ -1,0 +1,65 @@
+<?php
+    function title(){
+        $judul ="Aplikasi E-Dokter --)(*!!@#$%";
+        $judul = preg_replace("[^A-Za-z0-9_\-\./,|]"," ",$judul);
+        $judul = str_replace(array('.','-','/',',')," ",$judul);
+        $judul = trim($judul);
+        echo "$judul";	
+    }
+
+    function cekSessiAdmin() {
+        if (isset($_SESSION['ses_dokter'])) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function PasienAktif() {
+        if (cekSessiAdmin()) {
+            return $_SESSION['ses_dokter'];
+        }
+    }
+
+    function isPengunjung() {
+        if (cekSessiAdmin()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    function formProtek() {
+        $aksi=isset($_GET['act'])?$_GET['act']:NULL;
+        if (!cekSessiAdmin()) {
+            $form = array (
+                'HomeUser','Pasien','KonsultasiDokter','KonsultasiPerawat','BalasKonsultasiDokter','BalasKonsultasiPerawat',
+                'HasilRadiologi','BacaanRadiologi'            
+            );
+            foreach ($form as $page) {
+                if ($aksi==$page) {
+                    echo "<META HTTP-EQUIV = 'Refresh' Content = '0; URL = ?act=Home'>";
+                    exit;
+                    break;
+                }
+            }
+        }	
+    }
+
+    function actionPages() {
+        $aksi=isset($_REQUEST['act'])?$_REQUEST['act']:NULL;
+        formProtek();
+        switch ($aksi) {
+            case "Pasien"                   : include_once("pages/listpasien.php"); break;
+            case "HomeUser"                 : include_once("pages/listhome.php"); break;
+            case "KonsultasiDokter"         : include_once("pages/listkonsultasidokter.php"); break;
+            case "KonsultasiPerawat"        : include_once("pages/listkonsultasiperawat.php"); break;
+            case "BalasKonsultasiDokter"    : include_once("pages/listbalaskonsultasidokter.php"); break;
+            case "BalasKonsultasiPerawat"   : include_once("pages/listbalaskonsultasiperawat.php"); break;
+            case "HasilRadiologi"           : include_once("pages/listhasilradiologi.php"); break;
+            case "BacaanRadiologi"          : include_once("pages/listbacaanradiologi.php"); break;
+            default                         : include_once("pages/listhome.php");
+        }   
+    }
+ 
+?>
